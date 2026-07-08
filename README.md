@@ -1,122 +1,297 @@
-# AI Research Gap Detector
+# 🔬 AI Research Gap Detector
 
-Give it a research topic. It reads the literature, extracts structured
-data from every paper, and reports exactly where the field has gaps —
-each claim traceable back to the papers that support it.
+> AI-powered platform that discovers unexplored research opportunities by analyzing scientific literature from multiple academic databases using Large Language Models.
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Build](https://img.shields.io/badge/CI-Passing-brightgreen)
+
+---
+
+## 🚀 Overview
+
+AI Research Gap Detector is an intelligent research assistant that helps researchers, students, and innovators identify promising research opportunities automatically.
+
+Instead of manually reviewing hundreds of research papers, the platform:
+
+- Collects papers from multiple academic sources
+- Cleans and normalizes research data
+- Detects overlapping ideas
+- Finds missing research directions
+- Generates research gap reports using LLMs
+
+The goal is to reduce literature review time from several days to just a few minutes.
+
+---
+
+# ✨ Features
+
+✅ Multi-source paper collection
+
+- arXiv
+- Semantic Scholar
+
+✅ AI Research Gap Analysis
+
+- Novel research opportunities
+- Missing datasets
+- Underexplored topics
+- Future work suggestions
+
+✅ Smart Paper Processing
+
+- Duplicate removal
+- Metadata normalization
+- Citation extraction
+- Text cleaning
+
+✅ Modern Web Interface
+
+- Next.js
+- Responsive UI
+- Real-time analysis
+- Progress tracking
+
+---
+
+# 🏗 Architecture
 
 ```
-"Brain Tumor Segmentation using Deep Learning"
-        │
-        ▼
-  arXiv + Semantic Scholar  →  LLM extraction  →  embedding clusters
-        │                          │                    │
-        ▼                          ▼                    ▼
-   10-30 papers          Problem / Dataset /      Thematic groups
-                          Methodology / Model /
-                          Limitations / Future Work
-                                   │
-                                   ▼
-                    Research Gap Report + Novel Project Ideas
+                    User
+                      │
+                      ▼
+             Next.js Frontend
+                      │
+                      ▼
+               FastAPI Backend
+                      │
+        ┌─────────────┴─────────────┐
+        ▼                           ▼
+    arXiv API              Semantic Scholar API
+        │                           │
+        └─────────────┬─────────────┘
+                      ▼
+            Paper Collection Engine
+                      │
+                      ▼
+          Data Cleaning & Deduplication
+                      │
+                      ▼
+              AI Gap Detection Engine
+                      │
+                      ▼
+          Structured Research Report
 ```
 
-## Stack
+---
 
-| Layer | Tech |
-|---|---|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind, hand-built shadcn-style components, React Query |
-| Backend | FastAPI, SQLAlchemy, Pydantic |
-| AI | OpenAI (via LangChain, structured output), Sentence Transformers, FAISS, scikit-learn (KMeans clustering) |
-| Data sources | arXiv API, Semantic Scholar API |
-| Storage | SQLite |
-| Deployment | Docker, Docker Compose, Render |
+# 🛠 Tech Stack
 
-## Architecture
+## Frontend
 
-- **Backend** (`backend/`) — clean-architecture FastAPI service. Six
-  endpoints: `POST /search → /analyze → /research-gaps → /future-directions`
-  form the pipeline; `GET /queries/{id}` and `GET /health` are the read/
-  status endpoints. See `backend/README.md` for the full endpoint reference
-  and the AI reasoning design behind gap detection.
-- **Frontend** (`frontend/`) — master-detail results view, a live pipeline
-  stage tracker for the two sequential LLM calls, and an "evidence trail"
-  UI motif — every gap/cluster shows citation chips back to source papers.
-  See `frontend/README.md` for the integration details.
+- Next.js 14
+- React
+- TypeScript
+- Tailwind CSS
+- React Query
 
-## Running locally
+## Backend
 
-### Option A — Docker Compose (full stack, one command)
+- FastAPI
+- Python
+- SQLAlchemy
+- Pydantic
+- httpx
+
+## AI
+
+- OpenAI GPT
+- Semantic Scholar API
+- arXiv API
+
+## Testing
+
+- Pytest
+- Respx
+
+---
+
+# 📂 Project Structure
+
+```
+backend/
+    app/
+        api/
+        services/
+        models/
+        database/
+        utils/
+
+frontend/
+    app/
+    components/
+    hooks/
+    lib/
+
+.github/
+    workflows/
+
+docker-compose.yml
+README.md
+```
+
+---
+
+# ⚙ Installation
+
+Clone repository
 
 ```bash
-cp .env.example .env    # add your OPENAI_API_KEY
-docker compose up --build
+git clone https://github.com/yourusername/AI-Research-Gap-Detector.git
 ```
 
-Frontend: http://localhost:3000 · Backend: http://localhost:8000/docs
-
-### Option B — run each service directly
+Backend
 
 ```bash
-# Terminal 1 — backend
 cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # add your OPENAI_API_KEY
-uvicorn app.main:app --reload
 
-# Terminal 2 — frontend
+python -m venv .venv
+
+pip install -r requirements.txt
+
+uvicorn app.main:app --reload
+```
+
+Frontend
+
+```bash
 cd frontend
+
 npm install
-cp .env.local.example .env.local   # defaults to http://localhost:8000
+
 npm run dev
 ```
 
-## Deploying
+---
 
-`render.yaml` is a Render Blueprint that provisions both services from
-this repo (Docker runtime for each). After connecting the repo in Render:
+# 🔑 Environment Variables
 
-1. Set `OPENAI_API_KEY` (and optionally `SEMANTIC_SCHOLAR_API_KEY`) on the
-   backend service in the Render dashboard — these are marked `sync: false`
-   in the blueprint so they're never committed.
-2. Render assigns each service a URL like
-   `https://research-gap-detector-backend.onrender.com`. If your actual
-   assigned URLs differ from the ones pre-filled in `render.yaml`
-   (`CORS_ORIGINS` on the backend, `NEXT_PUBLIC_API_BASE_URL` on the
-   frontend), update both env vars to match and redeploy the frontend
-   (`NEXT_PUBLIC_*` vars are baked in at build time, so this needs a
-   rebuild, not just a restart).
-
-## CI
-
-`.github/workflows/ci.yml` runs on every push/PR to `main`: backend tests
-via pytest, frontend typecheck + lint + production build via `next build`.
-
-## Project structure
+Backend
 
 ```
-ai-research-gap-detector/
-├── backend/          # FastAPI service — see backend/README.md
-├── frontend/          # Next.js app — see frontend/README.md
-├── docker-compose.yml
-├── render.yaml
-├── .env.example
-└── .github/workflows/ci.yml
+OPENAI_API_KEY=
+
+SEMANTIC_SCHOLAR_API_KEY=
+
+DATABASE_URL=
+
+SECRET_KEY=
 ```
 
-## Status / what's genuinely done vs. designed
+---
 
-- ✅ Backend: all 6 endpoints implemented, tested (11 passing tests),
-  Dockerized.
-- ✅ Frontend: all 3 pages implemented, fully wired to the backend,
-  typechecked, production build verified.
-- ✅ Integration: `GET /queries/{id}` makes the backend the single source
-  of truth; the gap pipeline skips recomputation if a report already
-  exists.
-- 📝 Designed but not yet implemented in code: the six-signal gap-detection
-  reasoning chain (code-based counting + two guarded LLM reasoning calls
-  for "missing approaches" and "unsolved problems", plus a propose →
-  self-critique loop for novel project ideas) — see the AI logic design
-  doc for the full spec. The current `gap_detection.py` uses a simpler
-  single-pass clustering + synthesis approach that works end-to-end today;
-  the six-signal design is the natural next iteration for higher-precision
-  gap detection.
+# 📊 Example Workflow
+
+```
+User enters topic
+
+↓
+
+Paper Collection
+
+↓
+
+Duplicate Removal
+
+↓
+
+Metadata Extraction
+
+↓
+
+LLM Analysis
+
+↓
+
+Research Gap Report
+```
+
+---
+
+# 📸 Screenshots
+
+## Home Page
+
+(Add screenshot)
+
+---
+
+## Analysis Dashboard
+
+(Add screenshot)
+
+---
+
+## Generated Research Gap Report
+
+(Add screenshot)
+
+---
+
+# 🧪 Testing
+
+Backend
+
+```bash
+pytest tests -v
+```
+
+Frontend
+
+```bash
+npm run lint
+
+npm run build
+```
+
+---
+
+# 📈 Future Improvements
+
+- PDF upload support
+- Research trend visualization
+- Citation graph
+- Automatic paper summarization
+- Multi-agent research assistant
+- RAG-powered literature review
+- Vector database integration
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+Please open an issue first to discuss major changes.
+
+---
+
+# 📜 License
+
+MIT License
+
+---
+
+# 👨‍💻 Author
+
+**Hemabushan K**
+
+B.Tech CSE (AI & ML)
+
+Passionate about Artificial Intelligence, Machine Learning, and Research Automation.
+
+GitHub:
+https://github.com/khemabushan
