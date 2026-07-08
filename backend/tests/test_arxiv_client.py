@@ -25,7 +25,7 @@ SAMPLE_ATOM_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 @pytest.mark.asyncio
 @respx.mock
 async def test_search_parses_entries_correctly():
-    respx.get("http://export.arxiv.org/api/query").mock(
+    respx.get("https://export.arxiv.org/api/query").mock(
         return_value=httpx.Response(200, text=SAMPLE_ATOM_RESPONSE)
     )
 
@@ -48,7 +48,7 @@ async def test_search_parses_entries_correctly():
 async def test_search_raises_on_http_error():
     from app.utils.exceptions import PaperSourceError
 
-    respx.get("http://export.arxiv.org/api/query").mock(
+    respx.get("https://export.arxiv.org/api/query").mock(
         return_value=httpx.Response(500, text="Internal Server Error")
     )
 
