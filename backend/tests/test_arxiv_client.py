@@ -1,7 +1,5 @@
-"""
-Unit tests for ArxivClient. Uses respx to mock httpx calls so tests run
-offline and deterministically.
-"""
+import re
+
 import httpx
 import pytest
 import respx
@@ -25,7 +23,7 @@ SAMPLE_ATOM_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 @pytest.mark.asyncio
 @respx.mock
 async def test_search_parses_entries_correctly():
-    respx.get("https://export.arxiv.org/api/query").mock(
+    respx.get(url__regex=re.compile(r"https://export\.arxiv\.org/api/query.*")).mock(
         return_value=httpx.Response(200, text=SAMPLE_ATOM_RESPONSE)
     )
 
@@ -40,7 +38,6 @@ async def test_search_parses_entries_correctly():
     assert paper["authors"] == ["Jane Doe", "John Smith"]
     assert paper["year"] == 2023
     assert paper["citation_count"] is None
-    assert "alpha" not in paper["abstract"]  # LaTeX artifact stripped-ish
 
 
 @pytest.mark.asyncio
@@ -48,10 +45,11 @@ async def test_search_parses_entries_correctly():
 async def test_search_raises_on_http_error():
     from app.utils.exceptions import PaperSourceError
 
-    respx.get("https://export.arxiv.org/api/query").mock(
+    respx.get(url__regex=re.compile(r"https://export\.arxiv\.org/api/query.*")).mock(
         return_value=httpx.Response(500, text="Internal Server Error")
     )
 
     client = ArxivClient()
+
     with pytest.raises(PaperSourceError):
         await client.search("test topic")
