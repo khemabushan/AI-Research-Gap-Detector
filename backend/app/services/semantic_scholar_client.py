@@ -59,7 +59,10 @@ class SemanticScholarClient:
                 )
                 if response.status_code == 429:
                     logger.warning("Semantic Scholar rate limit reached.")
-                    return []
+                    raise PaperSourceError(
+                        "semantic_scholar",
+                        "Semantic Scholar rate limit reached."
+                    )
 
                 response.raise_for_status()
         except httpx.HTTPError as exc:
