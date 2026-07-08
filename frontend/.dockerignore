@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+.env.local
+.git
+.pytest_cache
+*.tsbuildinfo
+README.md

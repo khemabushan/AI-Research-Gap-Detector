@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .dark {
+    /* Ink + surfaces */
+    --ink: 216 21% 6%;
+    --surface: 216 18% 9%;
+    --surface-raised: 216 16% 12%;
+    --border: 216 14% 16%;
+
+    /* Text */
+    --foreground: 216 20% 92%;
+    --foreground-muted: 216 10% 60%;
+    --muted: 216 12% 45%;
+
+    /* Accents */
+    --teal: 166 62% 55%;
+    --teal-dim: 166 40% 22%;
+    --amber: 38 88% 58%;
+    --amber-dim: 38 60% 22%;
+    --destructive: 6 78% 60%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink text-foreground font-sans antialiased;
+    background-image: radial-gradient(
+      circle at 20% -10%,
+      hsl(166 62% 55% / 0.06),
+      transparent 40%
+    );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: hsl(var(--teal) / 0.3);
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--teal));
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .skeleton {
+    @apply bg-gradient-to-r from-surface-raised via-border to-surface-raised bg-[length:200%_100%] animate-shimmer;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

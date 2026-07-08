@@ -1,0 +1,49 @@
+# Backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+backend/data/*.db
+backend/data/faiss_indexes/*
+!backend/data/.gitkeep
+backend/.pytest_cache/
+backend/.venv/
+backend/venv/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Root
+.env
+.DS_Store
+# Python virtual environments
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+# Python cache
+*.pyo
+*.pyd
+
+# SQLite
+*.sqlite3
+*.db-journal
+
+# FAISS
+*.index
+# Keep environment template
+!.env.example
+!backend/.env.example
+!frontend/.env.example

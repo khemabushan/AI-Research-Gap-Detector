@@ -1,0 +1,43 @@
+# Render Blueprint — deploys both services from this repo.
+# Usage: connect this repo in the Render dashboard as a "Blueprint" and it
+# will provision both services below. See https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: research-gap-detector-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false # set manually in the Render dashboard — never commit this
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: SEMANTIC_SCHOLAR_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://research-gap-detector-frontend.onrender.com
+      - key: DATABASE_URL
+        value: sqlite:////app/data/app.db
+      - key: FAISS_INDEX_DIR
+        value: /app/data/faiss_indexes
+    disk:
+      name: research-gap-detector-data
+      mountPath: /app/data
+      sizeGB: 1
+
+  - type: web
+    name: research-gap-detector-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: starter
+    dockerBuildArgs:
+      NEXT_PUBLIC_API_BASE_URL: https://research-gap-detector-backend.onrender.com
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://research-gap-detector-backend.onrender.com

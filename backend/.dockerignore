@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+.env
+.git
+.pytest_cache
+data/*.db
+data/faiss_indexes/*
+tests
+.venv
+venv

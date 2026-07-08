@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+data/*.db
+data/faiss_indexes/*
+!data/.gitkeep
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
