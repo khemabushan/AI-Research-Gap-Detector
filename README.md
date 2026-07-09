@@ -27,6 +27,14 @@ The goal is to reduce literature review time from several days to just a few min
 
 ---
 
+## 🌐 Live Demo
+
+🚀 **Frontend:** https://research-gap-detector-frontend.onrender.com/
+
+⚙️ **Backend API:** https://research-gap-detector-backend.onrender.com/
+
+📚 **API Documentation:** https://research-gap-detector-backend.onrender.com/docs
+
 # ✨ Features
 
 ✅ Multi-source paper collection
